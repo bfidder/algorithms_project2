@@ -1,7 +1,7 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.TreeMap;
 
 
 public class GradeCalculator 
@@ -22,22 +22,28 @@ public class GradeCalculator
 		int time = 3;
 		gradeAllocation(time, classList);
 		
-		for ( double i : averages)
+		for ( double i : averages.keySet())
 		{
-			System.out.println("Result of " + i);
+			System.out.print("Key " + i + " -> ");
+			for ( String j : averages.get(i))
+			{
+				System.out.print(" - > " + j);
+			}
+			System.out.println();
 		}
 	}
 	
-	public static ArrayList<Double> averages = new ArrayList<Double>();
+	public static Map<Double, Stack<String> > averages = new TreeMap<Double, Stack<String> >();
 	public static int counter = 0;
-	public static Map<String, Double> calculations =  new HashMap<String, Double>();
-	
+	public static Map<String, Double> calculations =  new TreeMap<String, Double>();
+	public static Stack<String> path = new Stack<String>();
 	
 	public static double gradeAllocation(int time, Stack<Class> classes)
 	{
 		System.out.println("gradeAllocation("+time+", classes)");
 		double sum = 0;
 		counter++;
+		
 		//System.out.println(counter + " Iterations ");
 		
 		if (classes.size() == 1)
@@ -50,6 +56,7 @@ public class GradeCalculator
 			{
 				calculations.put(currentClass.toString() + ","+ time, currentClass.calcGrade(time));
 			}
+			path.push(currentClass.toString() + " " + time);
 			return calculations.get(currentClass.toString() + ","+ time);
 		}
 		else
@@ -57,6 +64,7 @@ public class GradeCalculator
 			for(int i = 0; i <= time; i++ )
 			{
 				Class currentClass = classes.pop();
+				path.push(currentClass.toString() + " " + i);
 				System.out.println(currentClass.toString());
 				System.out.println("Time " + i);
 				System.out.println("Grade " + currentClass.calcGrade(i)+"\n");
@@ -75,7 +83,8 @@ public class GradeCalculator
 				sum = grade + gradeAllocation(time-i, classes);
 				System.out.println("Total grade: "+sum);
 				classes.push(currentClass);
-				averages.add(sum/2.0);
+				averages.put(sum/2.0, (Stack <String>) path.clone() );
+				path.clear();
 			}
 			return sum;
 		}
