@@ -16,8 +16,8 @@ public class GradeCalculator
 		Class csci262 = new MediumClass();
 		classList.push(csci262);
 		
-		Class csci407 = new MediumClass();
-		classList.push(csci407);
+		//Class csci407 = new MediumClass();
+		//classList.push(csci407);
 		
 		int time = 3;
 		gradeAllocation(time, classList);
@@ -62,20 +62,20 @@ public class GradeCalculator
 				System.out.println("Grade " + currentClass.calcGrade(i)+"\n");
 				double grade = 0;
 				
-				if( calculations.containsKey(currentClass.toString() + ","+ time) )
+				if( calculations.containsKey(currentClass.toString() + ","+ i) )
 				{
 					
-					grade = calculations.get(currentClass.toString() + ","+ time);
+					grade = calculations.get(currentClass.toString() + ","+ i);
 				}
 				else
 				{
 					grade = currentClass.calcGrade(i);
-					calculations.put(currentClass.toString() + ","+ time, grade);
+					calculations.put(currentClass.toString() + ","+ i, grade);
 				}
 				sum = grade + gradeAllocation(time-i, classes);
 				System.out.println("Total grade: "+sum);
 				classes.push(currentClass);
-				averages.add(sum/3.0);
+				averages.add(sum/2.0);
 			}
 			return sum;
 		}
