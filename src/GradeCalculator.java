@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 
@@ -17,7 +19,7 @@ public class GradeCalculator
 		Class csci407 = new MediumClass();
 		classList.push(csci407);
 		
-		int time = 4;
+		int time = 3;
 		gradeAllocation(time, classList);
 		
 		for ( double i : averages)
@@ -28,11 +30,13 @@ public class GradeCalculator
 	
 	public static ArrayList<Double> averages = new ArrayList<Double>();
 	public static int counter = 0;
+	public static Map<String, Double> calculations =  new HashMap<String, Double>();
+	
 	
 	public static double gradeAllocation(int time, Stack<Class> classes)
 	{
 		System.out.println("gradeAllocation("+time+", classes)");
-		double total = 0;
+		double sum = 0;
 		counter++;
 		//System.out.println(counter + " Iterations ");
 		
@@ -40,7 +44,13 @@ public class GradeCalculator
 		{
 			//System.out.println("in if");
 			Class currentClass = classes.peek();
-			return currentClass.calcGrade(time);
+			System.out.println(currentClass.toString());
+			System.out.println(time);
+			if( ! calculations.containsKey(currentClass.toString() + ","+ time) )
+			{
+				calculations.put(currentClass.toString() + ","+ time, currentClass.calcGrade(time));
+			}
+			return calculations.get(currentClass.toString() + ","+ time);
 		}
 		else
 		{
@@ -48,14 +58,26 @@ public class GradeCalculator
 			{
 				Class currentClass = classes.pop();
 				System.out.println(currentClass.toString());
-				System.out.println("Time" + i);
+				System.out.println("Time " + i);
 				System.out.println("Grade " + currentClass.calcGrade(i)+"\n");
-				total =  currentClass.calcGrade(i)+gradeAllocation(time-i, classes);
-				System.out.println(total);
+				double grade = 0;
+				
+				if( calculations.containsKey(currentClass.toString() + ","+ time) )
+				{
+					
+					grade = calculations.get(currentClass.toString() + ","+ time);
+				}
+				else
+				{
+					grade = currentClass.calcGrade(i);
+					calculations.put(currentClass.toString() + ","+ time, grade);
+				}
+				sum = grade + gradeAllocation(time-i, classes);
+				System.out.println("Total grade: "+sum);
 				classes.push(currentClass);
-				averages.add(total/3.0);
+				averages.add(sum/3.0);
 			}
-			return total;
+			return sum;
 		}
 	}
 
