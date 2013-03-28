@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
@@ -10,53 +9,47 @@ public class GradeCalculator
 	public static void main(String[] args)
 	{
 		Stack<Class> classList = new Stack<Class>();
-		Class csci261 = new EasyClass();
+		Class csci261 = new EasyClass("csci261");
 		classList.push(csci261);
 		
-		Class csci262 = new MediumClass();
+		Class csci262 = new MediumClass("csci262");
 		classList.push(csci262);
 		
-		//Class csci407 = new MediumClass();
-		//classList.push(csci407);
+		Class csci407 = new MediumClass("csci407");
+		classList.push(csci407);
 		
-		int time = 3;
+		//Class eecs230 = new MediumClass("eecs230");
+		//classList.push(eecs230);
+		
+		int time = 5;
 		gradeAllocation(time, classList);
 		
-		for ( double i : averages.keySet())
+		System.out.println("Result is... " + averages.lastKey() );
+		for ( Class c : averages.get(averages.lastKey() ) )
 		{
-			System.out.print("Key " + i + " -> ");
-			for ( String j : averages.get(i))
-			{
-				System.out.print(" - > " + j);
-			}
-			System.out.println();
+			//TODO This doesn't work either
+			System.out.println("Class: " + c.toString() +" Hours: " + c.getTime()) ;
 		}
 	}
 	
-	public static Map<Double, Stack<String> > averages = new TreeMap<Double, Stack<String> >();
+	public static TreeMap<Double, Stack<Class> > averages = new TreeMap<Double, Stack<Class> >();
 	public static int counter = 0;
 	public static Map<String, Double> calculations =  new TreeMap<String, Double>();
-	public static Stack<String> path = new Stack<String>();
+	//public static Stack<String> path = new Stack<String>();
 	
 	public static double gradeAllocation(int time, Stack<Class> classes)
 	{
-		System.out.println("gradeAllocation("+time+", classes)");
-		double sum = 0;
+		double sum =  0;
 		counter++;
-		
-		//System.out.println(counter + " Iterations ");
 		
 		if (classes.size() == 1)
 		{
-			//System.out.println("in if");
 			Class currentClass = classes.peek();
-			System.out.println(currentClass.toString());
-			System.out.println(time);
 			if( ! calculations.containsKey(currentClass.toString() + ","+ time) )
 			{
 				calculations.put(currentClass.toString() + ","+ time, currentClass.calcGrade(time));
 			}
-			path.push(currentClass.toString() + " " + time);
+			//path.push(currentClass.toString() + ", time to spend: " + time);
 			return calculations.get(currentClass.toString() + ","+ time);
 		}
 		else
@@ -64,10 +57,7 @@ public class GradeCalculator
 			for(int i = 0; i <= time; i++ )
 			{
 				Class currentClass = classes.pop();
-				path.push(currentClass.toString() + " " + i);
-				System.out.println(currentClass.toString());
-				System.out.println("Time " + i);
-				System.out.println("Grade " + currentClass.calcGrade(i)+"\n");
+				//path.push(currentClass.toString() + ", time to spend: " + i);
 				double grade = 0;
 				
 				if( calculations.containsKey(currentClass.toString() + ","+ i) )
@@ -81,10 +71,8 @@ public class GradeCalculator
 					calculations.put(currentClass.toString() + ","+ i, grade);
 				}
 				sum = grade + gradeAllocation(time-i, classes);
-				System.out.println("Total grade: "+sum);
 				classes.push(currentClass);
-				averages.put(sum/2.0, (Stack <String>) path.clone() );
-				path.clear();
+				averages.put(sum/3.0, classes);//TODO FIX THIS
 			}
 			return sum;
 		}

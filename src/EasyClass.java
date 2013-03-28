@@ -1,8 +1,15 @@
 
-public class EasyClass implements Class {
-
+public class EasyClass extends Class {
+	
+	public EasyClass(String name)
+	{
+		this.name=name;
+	}
+	
 	@Override
-	public double calcGrade(int hours) {
+	public double calcGrade(int hours) 
+	{
+		time = hours;
 		if(50* hours > 100)
 		{
 			return 100.0;
@@ -11,11 +18,6 @@ public class EasyClass implements Class {
 		{
 			return 50.0*hours;
 		}
-	}
-	
-	public String toString()
-	{
-		return "Easy Class";
 	}
 
 }

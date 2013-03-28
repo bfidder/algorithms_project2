@@ -1,8 +1,14 @@
 
-public class MediumClass implements Class {
-
+public class MediumClass extends Class {
+	
+	public MediumClass(String name) 
+	{
+		this.name = name;
+	}
+	
 	@Override
 	public double calcGrade(int hours) {
+		time = hours;
 		if(25*hours > 100)
 		{
 			return 100.0;
@@ -11,10 +17,6 @@ public class MediumClass implements Class {
 		{
 			return 25.0*hours;
 		}
-	}
-	public String toString()
-	{
-		return "Medium Class";
 	}
 
 }
