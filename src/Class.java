@@ -1,4 +1,4 @@
-
+package src;
 public abstract class Class {
 	public abstract double calcGrade(int hours);
 	

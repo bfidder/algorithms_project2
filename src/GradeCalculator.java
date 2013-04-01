@@ -1,3 +1,6 @@
+package src;
+
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
@@ -18,29 +21,31 @@ public class GradeCalculator
 		Class csci407 = new MediumClass("csci407");
 		classList.push(csci407);
 		
-		//Class eecs230 = new MediumClass("eecs230");
-		//classList.push(eecs230);
+		Class eecs230 = new MediumClass("eecs230");
+		classList.push(eecs230);
 		
-		int time = 5;
+		int time = 14;
 		gradeAllocation(time, classList);
 		
-		System.out.println("Result is... " + averages.lastKey() );
-		for ( Class c : averages.get(averages.lastKey() ) )
+		System.out.println("Result is... " + averages.get(averages.size()-1) );
+		System.out.println("Traceback path:");
+		for ( Work c : resultPath )
 		{
-			//TODO This doesn't work either
-			System.out.println("Class: " + c.toString() +" Hours: " + c.getTime()) ;
+			System.out.println(c);
 		}
 	}
 	
-	public static TreeMap<Double, Stack<Class> > averages = new TreeMap<Double, Stack<Class> >();
-	public static int counter = 0;
+	public static ArrayList<Double> averages = new ArrayList<Double>();
 	public static Map<String, Double> calculations =  new TreeMap<String, Double>();
-	//public static Stack<String> path = new Stack<String>();
+	public static ArrayList<Work> path = new ArrayList<Work>();
+	public static ArrayList<Work> tempPath = new ArrayList<Work>();
+	public static ArrayList<Work> resultPath = new ArrayList<Work>();
+	public static double maxGrade = 0;
 	
 	public static double gradeAllocation(int time, Stack<Class> classes)
 	{
+		
 		double sum =  0;
-		counter++;
 		
 		if (classes.size() == 1)
 		{
@@ -49,7 +54,8 @@ public class GradeCalculator
 			{
 				calculations.put(currentClass.toString() + ","+ time, currentClass.calcGrade(time));
 			}
-			//path.push(currentClass.toString() + ", time to spend: " + time);
+			Work work = new Work(currentClass, time);
+			tempPath.add(work);
 			return calculations.get(currentClass.toString() + ","+ time);
 		}
 		else
@@ -57,7 +63,8 @@ public class GradeCalculator
 			for(int i = 0; i <= time; i++ )
 			{
 				Class currentClass = classes.pop();
-				//path.push(currentClass.toString() + ", time to spend: " + i);
+				Work work = new Work(currentClass, i);
+				tempPath.add(work);
 				double grade = 0;
 				
 				if( calculations.containsKey(currentClass.toString() + ","+ i) )
@@ -70,9 +77,32 @@ public class GradeCalculator
 					grade = currentClass.calcGrade(i);
 					calculations.put(currentClass.toString() + ","+ i, grade);
 				}
-				sum = grade + gradeAllocation(time-i, classes);
+				sum = Math.max(sum,grade + gradeAllocation(time-i, classes));
+				int count = 0;
+				if (path.size() == 0){
+					path.addAll(tempPath);
+				}
+				else{
+					for(int j = tempPath.size()-1; j >= 0; --j){
+						path.set((path.size()-1-count), tempPath.get(j));
+						count++;
+					}
+				}
+				double sum2 = 0;
+				for (Work s : path)
+				{
+					sum2 += s.getC().calcGrade(s.getHours());	
+				}
+				if (sum2 > maxGrade) {
+					resultPath.clear();
+					resultPath.addAll(path);
+				}
+				tempPath.clear();
+				if (sum > maxGrade) {
+					maxGrade = sum;
+				    averages.add(sum/4.0);
+				}
 				classes.push(currentClass);
-				averages.put(sum/3.0, classes);//TODO FIX THIS
 			}
 			return sum;
 		}

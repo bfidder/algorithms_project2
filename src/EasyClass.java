@@ -1,4 +1,4 @@
-
+package src;
 public class EasyClass extends Class {
 	
 	public EasyClass(String name)
